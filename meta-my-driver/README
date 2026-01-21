@@ -1,41 +1,18 @@
-This README file contains information on the contents of the meta-my-driver layer.
+# Raspberry Pi 4 BSP Project (Custom LED Driver)
 
-Please see the corresponding sections below for details.
+## Build Instructions
 
-Dependencies
-============
+### 1. Local Configuration (`build/conf/local.conf`)
+Add the following lines to the end of your `conf/local.conf` file to enable the custom driver and device tree overlay.
 
-  URI: <first dependency>
-  branch: <branch name>
+```bitbake
+# 1. Install Driver & Kernel Modules
+IMAGE_INSTALL:append = " kernel-modules simple-driver"
 
-  URI: <second dependency>
-  branch: <branch name>
+# 2. Add Device Tree Overlay to config.txt automatically
+RPI_EXTRA_CONFIG = " \n \
+    dtoverlay=my-led \n \
+"
 
-  .
-  .
-  .
-
-Patches
-=======
-
-Please submit any patches against the meta-my-driver layer to the xxxx mailing list (xxxx@zzzz.org)
-and cc: the maintainer:
-
-Maintainer: XXX YYYYYY <xxx.yyyyyy@zzzzz.com>
-
-Table of Contents
-=================
-
-  I. Adding the meta-my-driver layer to your build
- II. Misc
-
-
-I. Adding the meta-my-driver layer to your build
-=================================================
-
-Run 'bitbake-layers add-layer meta-my-driver'
-
-II. Misc
-========
-
---- replace with specific information about the meta-my-driver layer ---
+# 3. Copy .dtbo file to Boot Partition (Crucial!)
+IMAGE_BOOT_FILES:append = " my-led.dtbo;overlays/my-led.dtbo"

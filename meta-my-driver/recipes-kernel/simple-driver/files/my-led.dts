@@ -1,0 +1,23 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+    /* rpi4의 칩셋 호환성 명시 */
+    compatible = "brcm,bcm2711";
+
+    /* 하드웨어 노드 추가 */
+    fragment@0 {
+        target-path = "/";
+        __overlay__ {
+            my_led_device {
+                /* 드라이버와 매칭되는 이름 */
+                compatible = "bright,my-led"; 
+                
+                /* GPIO 23번(0: Active High) */
+                gpios = <&gpio 23 0>; 
+                
+                status = "okay";
+            };
+        };
+    };
+};
