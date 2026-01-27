@@ -126,3 +126,26 @@ setenv bootargs "console=serial0,115200 console=tty1 root=${target_root} rootwai
 echo "Forcing Boot to Slot B..."
 fatload mmc 0:1 ${kernel_addr_r} Image
 booti ${kernel_addr_r} - ${fdt_addr}
+
+---
+
+## 6. OTA Update System (RAUC) + Auto RollBack
+
+본 프로젝트는 **Dual-Partition (A/B) 기반의 Atomic Update** 시스템을 구축하였습니다. 업데이트 중 전원 차단이나 부팅 실패가 발생해도 시스템을 자동으로 복구합니다.
+
+### ✅ System Architecture
+* **Update Agent:** RAUC (Robust Auto-Update Controller)
+* **Bootloader:** U-Boot (with Script-based State Machine)
+* **Storage:** `uboot.env` on FAT partition (Persistent Storage)
+
+### 🔄 Rollback Mechanism
+1.  **Boot Counting:** 각 슬롯(A/B)은 3회의 부팅 기회(`BOOT_x_LEFT=3`)를 가짐.
+2.  **Try-State:** 업데이트 후 재부팅 시 U-Boot는 새로운 슬롯을 시도하며 카운터를 1 차감하고 저장(`saveenv`).
+3.  **Fallback:** 3회 연속 부팅 실패(Watchdog Reset 등) 시, U-Boot는 자동으로 이전 슬롯(Good Slot)으로 전환하여 부팅함.
+
+### 🛠️ Configuration Status
+| Component | Status | Description |
+| :--- | :---: | :--- |
+| **fw_setenv** | ✅ Active | Linux User-space에서 U-Boot 환경 변수 읽기/쓰기 가능 |
+| **Boot Script** | ✅ Active | `boot.cmd`에 롤백 및 슬롯 전환 로직 구현 완료 |
+| **Persistence** | ✅ Active | 재부팅 후에도 `BOOT_ORDER`, `BOOT_LEFT` 변수 유지됨 |
