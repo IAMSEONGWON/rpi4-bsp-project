@@ -1,7 +1,6 @@
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI += "file://fw_env.config"
-SRC_URI += "file://rauc-env.cfg"
 
 do_install:append() {
     install -d ${D}${sysconfdir}
