@@ -1,0 +1,14 @@
+# short-description: Create Raspberry Pi 4 SD card image with A/B OTA support
+# long-description: Creates a partitioned SD card image with /boot, rootfs A, rootfs B, and data partitions.
+
+# 1. Boot Partition (펌웨어 및 부트로더) - 100MB
+part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label boot --active --align 4096 --fixed-size 100
+
+# 2. Rootfs A (메인 시스템) - 1GB
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label rootfs_A --align 4096 --fixed-size 1024
+
+# 3. Rootfs B (백업/업데이트 시스템) - 1GB
+part --source rootfs --ondisk mmcblk0 --fstype=ext4 --label rootfs_B --align 4096 --fixed-size 1024
+
+# 4. Data Partition (설정값 저장용) - 512MB
+part /data --ondisk mmcblk0 --fstype=ext4 --label data --align 4096 --fixed-size 512
